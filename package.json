@@ -1,13 +1,12 @@
 {
   "name": "devda-ai",
   "version": "1.0.0",
-  "description": "Smart AI for Devda",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.21.0",
+    "axios": "^1.6.0",
     "cors": "^2.8.5",
     "express": "^4.21.0"
   },
