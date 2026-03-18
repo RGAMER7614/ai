@@ -38,9 +38,9 @@ app.post('/my-bot', async (req, res) => {
 
     } catch (error) {
         console.error("Server Error Details:", error.message);
-        res.status(500).json({ response: "আসসালামু আলাইকুম দেবদা ভাই, সার্ভারে কানেকশন হচ্ছে না। দয়া করে Groq API Key এবং রেলওয়ে ড্যাশবোর্ড চেক করুন।" });
+        res.status(500).json({ response: "আসসালামু আলাইকুম দেবদা ভাই, সার্ভারে একটু সমস্যা হয়েছে। দয়া করে রেলওয়ে ড্যাশবোর্ড চেক করুন।" });
     }
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => console.log(`DevBot is running on port ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`DevBot is running!`));
