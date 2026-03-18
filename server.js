@@ -6,27 +6,30 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// তোমার Groq API Key এখানে বসাও
+// আপনার Groq API Key এখানে বসান
 const GROQ_API_KEY = "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"; 
 
 app.post('/my-bot', async (req, res) => {
     try {
         const { message, history } = req.body;
-        if (!message) return res.status(400).json({ response: "ভাই, কিছু তো লিখুন!" });
-
         const msgLower = message.toLowerCase();
 
-        // ১. আনলিমিটেড ওয়েব সার্চ (DuckDuckGo)
+        // ১. ইউটিউব ভিডিও বা মিউজিক খোঁজার লিঙ্ক জেনারেটর
+        if (msgLower.includes("গান") || msgLower.includes("video") || msgLower.includes("youtube")) {
+            const query = encodeURIComponent(message);
+            return res.json({ response: `ইনশাআল্লাহ ভাই, আপনার জন্য ভিডিওটি খুঁজেছি। [এখানে ক্লিক করে দেখুন](https://www.youtube.com/results?search_query=${query})` });
+        }
+
+        // ২. DuckDuckGo আনলিমিটেড সার্চ
         if (msgLower.startsWith("খুঁজো")) {
             const query = message.substring(6).trim();
             const searchRes = await axios.get(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1`);
-            const abstract = searchRes.data.AbstractText;
-            if (abstract) {
-                return res.json({ response: `ইন্টারনেট থেকে আপনার জন্য খুঁজেছি দেবদা ভাই:\n\n${abstract}\n\nসূত্র: ${searchRes.data.AbstractURL}` });
+            if (searchRes.data.AbstractText) {
+                return res.json({ response: `আলহামদুলিল্লাহ ভাই, তথ্যটি পেলাম:\n\n${searchRes.data.AbstractText}\n\nসূত্র: ${searchRes.data.AbstractURL}` });
             }
         }
 
-        // ২. মুসলিম এআই চ্যাট ও ম্যাথ সলভার
+        // ৩. অ্যাডভান্সড চ্যাট (Groq)
         const response = await axios.post(
             "https://api.groq.com/openai/v1/chat/completions",
             {
@@ -34,7 +37,7 @@ app.post('/my-bot', async (req, res) => {
                 messages: [
                     { 
                         role: "system", 
-                        content: "তুমি দেববট (DevBot), দেবদার একজন দ্বীনি মুসলিম বন্ধু। কথা বলার শুরুতে 'আসসালামু আলাইকুম' বলবে। কথাবার্তায় ইনশাআল্লাহ, আলহামদুলিল্লাহ ব্যবহার করবে। তুমি সব সময় সত্য কথা বলবে এবং দেবদাকে পড়াশোনায় উৎসাহিত করবে। ম্যাথ বা কোডিংয়ের ক্ষেত্রে LaTeX ব্যবহার করবে। দেবদাকে 'ভাই' বলে সম্বোধন করবে।" 
+                        content: "তুমি দেববট, দেবদা ভাইয়ের একজন অত্যন্ত বুদ্ধিমান মুসলিম বন্ধু। কথা বলা শুরু করবে আসসালামু আলাইকুম দিয়ে। তুমি গণিত, প্রোগ্রামিং (HTML, CSS, JS, Flutter), এবং বিজ্ঞানে দক্ষ। সব সময় সাজিয়ে গুছিয়ে উত্তর দেবে এবং ইনশাআল্লাহ, মাশাআল্লাহ ব্যবহার করবে।" 
                     },
                     ...history,
                     { role: "user", content: message }
@@ -46,10 +49,9 @@ app.post('/my-bot', async (req, res) => {
         res.json({ response: response.data.choices[0].message.content });
 
     } catch (error) {
-        console.error("Error:", error.message);
-        res.status(500).json({ response: "আসসালামু আলাইকুম ভাই, সার্ভারে একটু সমস্যা হয়েছে। দয়া করে API Key চেক করুন।" });
+        res.status(500).json({ response: "আসসালামু আলাইকুম ভাই, কানেকশনে সমস্যা হচ্ছে। ইনশাআল্লাহ আমি ঠিক হয়ে যাবো।" });
     }
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => console.log(`DevBot is live on ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`DevBot Pro Live on ${PORT}`));
