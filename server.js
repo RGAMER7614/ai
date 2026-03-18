@@ -7,7 +7,7 @@ app.use(cors());
 app.use(express.json());
 
 // ১. এখানে তোমার নিজের API Key বসাও
-const API_KEY = "YOUR_GEMINI_API_KEY_HERE"; 
+const API_KEY = "AIzaSyDLKgYZ1mXp5zLsiETmR2Nqrv2qfqqFx74"; 
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 app.post('/my-bot', async (req, res) => {
