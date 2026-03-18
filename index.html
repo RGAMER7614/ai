@@ -3,90 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevBot Smart Brain</title>
+    <title>DevBot AI - Live</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0d1117; color: #c9d1d9; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: #c9d1d9; display: flex; justify-content: center; align-items: center; height: 100vh; }
         .chat-container { width: 95%; max-width: 450px; background: #161b22; border: 1px solid #30363d; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .header { text-align: center; padding-bottom: 15px; border-bottom: 1px solid #30363d; margin-bottom: 15px; }
-        .header h2 { color: #58a6ff; }
-        #chatBox { height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; padding-right: 5px; }
-        .msg { max-width: 80%; padding: 10px 15px; border-radius: 15px; font-size: 14px; line-height: 1.5; }
+        .header { text-align: center; border-bottom: 1px solid #30363d; margin-bottom: 15px; padding-bottom: 10px; }
+        #chatBox { height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
+        .msg { max-width: 80%; padding: 12px; border-radius: 15px; font-size: 14px; line-height: 1.5; }
         .user-msg { align-self: flex-end; background: #238636; color: white; border-bottom-right-radius: 2px; }
         .bot-msg { align-self: flex-start; background: #21262d; border: 1px solid #30363d; border-bottom-left-radius: 2px; }
         .input-area { display: flex; flex-direction: column; gap: 10px; }
         textarea { width: 100%; height: 60px; background: #0d1117; border: 1px solid #30363d; border-radius: 10px; color: white; padding: 10px; resize: none; outline: none; }
-        textarea:focus { border-color: #58a6ff; }
-        button { background: #238636; color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        button:hover { background: #2ea043; }
-        button:disabled { background: #30363d; opacity: 0.6; }
-        #chatBox::-webkit-scrollbar { width: 4px; }
-        #chatBox::-webkit-scrollbar-thumb { background: #30363d; border-radius: 10px; }
+        button { background: #238636; color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        button:disabled { opacity: 0.5; }
     </style>
 </head>
 <body>
 
 <div class="chat-container">
     <div class="header">
-        <h2>DevBot Smart Brain</h2>
-        <p style="font-size: 10px; color: #8b949e;">SERVER: RAILWAY ONLINE</p>
+        <h2 style="color: #58a6ff;">DevBot AI</h2>
+        <p style="font-size: 10px; color: #238636;">● CONNECTED TO RAILWAY</p>
     </div>
     
     <div id="chatBox">
-        <div class="msg bot-msg">হ্যালো দেবদা! আমি এখন রেলওয়ে সার্ভার থেকে আপনার সাথে কথা বলছি।</div>
+        <div class="msg bot-msg">সার্ভার রেডি দেবদা! কিছু জিজ্ঞেস করুন।</div>
     </div>
 
     <div class="input-area">
-        <textarea id="userInput" placeholder="কিছু একটা জিজ্ঞেস করো..."></textarea>
-        <button id="sendBtn" onclick="askSmartAI()">রান কমান্ড</button>
+        <textarea id="userInput" placeholder="আপনার প্রশ্ন লিখুন..."></textarea>
+        <button id="sendBtn" onclick="askAI()">রান কমান্ড</button>
     </div>
 </div>
 
 <script>
-    async function askSmartAI() {
-        const inputField = document.getElementById('userInput');
-        const chatBox = document.getElementById('chatBox');
-        const sendBtn = document.getElementById('sendBtn');
-        const userMsg = inputField.value.trim();
+    async function askAI() {
+        const input = document.getElementById('userInput');
+        const box = document.getElementById('chatBox');
+        const btn = document.getElementById('sendBtn');
+        const msg = input.value.trim();
         
-        if(!userMsg) return;
+        if(!msg) return;
 
-        // ইউজারের মেসেজ স্ক্রিনে দেখানো
-        chatBox.innerHTML += `<div class="msg user-msg">${userMsg}</div>`;
-        inputField.value = "";
-        chatBox.scrollTop = chatBox.scrollHeight;
+        box.innerHTML += `<div class="msg user-msg">${msg}</div>`;
+        input.value = "";
+        box.scrollTop = box.scrollHeight;
 
-        sendBtn.disabled = true;
-        sendBtn.innerText = "চিন্তা করছি...";
+        btn.disabled = true;
+        btn.innerText = "চিন্তা করছি...";
 
         try {
-            // তোমার রেলওয়ে লিঙ্ক এখানে আপডেট করা হয়েছে
-            const response = await fetch("https://determined-fulfillment-production-6987.up.railway.app/my-bot", {
+            // তোমার রেলওয়ে সার্ভারের লিঙ্কটি নিচে দেওয়া হলো
+            const res = await fetch("https://determined-fulfillment-production-6987.up.railway.app/my-bot", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: userMsg })
+                body: JSON.stringify({ message: msg })
             });
-
-            const data = await response.json();
-            
-            // বটের উত্তর স্ক্রিনে দেখানো
-            chatBox.innerHTML += `<div class="msg bot-msg">${data.response}</div>`;
-
-        } catch (error) {
-            chatBox.innerHTML += `<div class="msg bot-msg" style="color:#ff7b72;">সার্ভার রেসপন্স দিচ্ছে না! লগ চেক করুন।</div>`;
+            const data = await res.json();
+            box.innerHTML += `<div class="msg bot-msg">${data.response}</div>`;
+        } catch (e) {
+            box.innerHTML += `<div class="msg bot-msg" style="color:red;">সার্ভার এরর!</div>`;
         } finally {
-            sendBtn.disabled = false;
-            sendBtn.innerText = "রান কমান্ড";
-            chatBox.scrollTop = chatBox.scrollHeight;
+            btn.disabled = false;
+            btn.innerText = "রান কমান্ড";
+            box.scrollTop = box.scrollHeight;
         }
     }
-
-    document.getElementById('userInput').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            askSmartAI();
-        }
-    });
 </script>
 
 </body>
