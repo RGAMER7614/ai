@@ -6,7 +6,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// আপনার সঠিক Groq API Key এখানে বসান
 const GROQ_API_KEY = "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"; 
 
 app.post('/my-bot', async (req, res) => {
@@ -26,21 +25,15 @@ app.post('/my-bot', async (req, res) => {
                     { role: "user", content: message }
                 ]
             },
-            { 
-                headers: { 
-                    "Authorization": `Bearer ${GROQ_API_KEY}`,
-                    "Content-Type": "application/json" 
-                } 
-            }
+            { headers: { "Authorization": `Bearer ${GROQ_API_KEY}`, "Content-Type": "application/json" } }
         );
 
         res.json({ response: response.data.choices[0].message.content });
 
     } catch (error) {
-        console.error("Server Error Details:", error.message);
-        res.status(500).json({ response: "আসসালামু আলাইকুম দেবদা ভাই, সার্ভারে একটু সমস্যা হয়েছে। দয়া করে রেলওয়ে ড্যাশবোর্ড চেক করুন।" });
+        res.status(500).json({ response: "সার্ভারে সমস্যা হয়েছে ভাই। রেলওয়ে লগ চেক করুন।" });
     }
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => console.log(`DevBot is running!`));
+app.listen(PORT, '0.0.0.0', () => console.log(`DevBot Live!`));
