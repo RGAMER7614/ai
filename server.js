@@ -6,15 +6,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// তোমার আসল API Key এখানে বসাও
-const API_KEY = "AIzaSyDLKgYZ1mXp5zLsiETmR2Nqrv2qfqqFx74"; 
+// ১. এখানে তোমার নিজের API Key বসাও
+const API_KEY = "YOUR_GEMINI_API_KEY_HERE"; 
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 app.post('/my-bot', async (req, res) => {
     const userMsg = req.body.message;
     
     try {
-        // মডেল ডিক্লেয়ার করার সময় ভার্সন ঝামেলা এড়াতে সরাসরি মডেল নাম দিন
+        // সরাসরি মডেলটির নাম ব্যবহার করা হচ্ছে যা 'v1beta' এর ঝামেলা মুক্ত
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
         const result = await model.generateContent(userMsg);
@@ -23,13 +23,14 @@ app.post('/my-bot', async (req, res) => {
 
         res.json({ response: text });
     } catch (error) {
-        console.error("Error Detail:", error.message);
-        res.json({ response: "সার্ভার এরর: " + error.message });
+        console.error("Critical Error:", error.message);
+        // ইউজারকে সহজ ভাষায় এরর জানানো
+        res.status(500).json({ response: "দুঃখিত দেবদা, গুগল এপিআই কানেকশনে সমস্যা হচ্ছে। দয়া করে আপনার API Key চেক করুন।" });
     }
 });
 
-// Railway এর জন্য পোর্ট সেটআপ
+// Railway এর জন্য পোর্ট কনফিগারেশন
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Smart Brain is running on port ${PORT}`);
 });
