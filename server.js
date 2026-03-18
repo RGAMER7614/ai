@@ -6,23 +6,26 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// তোমার API Key টি এখানে বসাও
+// ১. এখানে তোমার Gemini API Key বসাও
 const API_KEY = "AIzaSyDLKgYZ1mXp5zLsiETmR2Nqrv2qfqqFx74"; 
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 app.post('/my-bot', async (req, res) => {
     const userMsg = req.body.message;
+    
     try {
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         const result = await model.generateContent(userMsg);
         const response = await result.response;
-        res.json({ response: response.text() });
+        const text = response.text();
+
+        res.json({ response: text });
     } catch (error) {
-        console.error("Server Error:", error.message);
-        res.status(500).json({ response: "সার্ভারে সমস্যা হয়েছে: " + error.message });
+        console.error("Error:", error.message);
+        res.json({ response: "সার্ভার এরর: " + error.message });
     }
 });
 
-// অনলাইন সার্ভারের জন্য ডাইনামিক পোর্ট সেটআপ
-const PORT = process.env.PORT || 3000; 
-app.listen(PORT, () => console.log(`Smart Brain is running on port ${PORT}`));
+// রেন্ডার বা অনলাইন সার্ভারের জন্য ডাইনামিক পোর্ট
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
