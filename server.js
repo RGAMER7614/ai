@@ -6,12 +6,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// আপনার সঠিক Groq API Key এখানে বসান
 const GROQ_API_KEY = "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"; 
 
 app.post('/my-bot', async (req, res) => {
     try {
         const { message, history } = req.body;
         
+        // অ্যাডভান্সড মুসলিম ফ্রেন্ড সিস্টেম প্রম্পট
         const response = await axios.post(
             "https://api.groq.com/openai/v1/chat/completions",
             {
@@ -19,7 +21,7 @@ app.post('/my-bot', async (req, res) => {
                 messages: [
                     { 
                         role: "system", 
-                        content: "তুমি দেববট (DevBot), দেবদা ভাইয়ের বেস্ট ফ্রেন্ড এবং একজন মুসলিম বন্ধু। উত্তর সব সময় সালাম দিয়ে শুরু করবে। তুমি SSC গণিত এবং প্রোগ্রামিং বিশেষজ্ঞ।" 
+                        content: "তুমি দেববট (DevBot), দেবদা ভাইয়ের বেস্ট ফ্রেন্ড এবং একজন মুসলিম বন্ধু। তুমি SSC গণিত এবং প্রোগ্রামিং বিশেষজ্ঞ।" 
                     },
                     ...history,
                     { role: "user", content: message }
@@ -31,9 +33,10 @@ app.post('/my-bot', async (req, res) => {
         res.json({ response: response.data.choices[0].message.content });
 
     } catch (error) {
-        res.status(500).json({ response: "সার্ভারে সমস্যা হয়েছে ভাই। রেলওয়ে লগ চেক করুন।" });
+        console.error(error);
+        res.status(500).json({ response: "আসসালামু আলাইকুম দেবদা ভাই, সার্ভারে সমস্যা হচ্ছে।" });
     }
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => console.log(`DevBot Live!`));
+app.listen(PORT, '0.0.0.0', () => console.log(`DevBot Brain is Ready!`));
