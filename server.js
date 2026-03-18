@@ -6,7 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// আপনার Gemini API Key এখানে দিন
+// ১. এখানে তোমার আসল API Key বসাও
 const API_KEY = "AIzaSyDLKgYZ1mXp5zLsiETmR2Nqrv2qfqqFx74"; 
 const genAI = new GoogleGenerativeAI(API_KEY);
 
@@ -18,13 +18,13 @@ app.post('/my-bot', async (req, res) => {
         const response = await result.response;
         res.json({ response: response.text() });
     } catch (error) {
-        console.error("Railway Error:", error.message);
-        res.json({ response: "দুঃখিত দেবদা, সার্ভারে সমস্যা হয়েছে: " + error.message });
+        console.error("Error:", error.message);
+        res.status(500).json({ response: "সার্ভার এরর: " + error.message });
     }
 });
 
-// Railway অটোমেটিক পোর্ট হ্যান্ডেল করবে
+// ২. Railway এর জন্য এই পোর্ট সেটআপ জরুরি
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server is LIVE on port ${PORT}`);
+    console.log(`Smart Brain is LIVE on port ${PORT}`);
 });
