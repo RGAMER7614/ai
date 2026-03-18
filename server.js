@@ -8,7 +8,7 @@ app.use(cors());
 app.use(express.json());
 
 // তোমার Groq API Key এখানে বসাও
-const GROQ_API_KEY = "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"; 
+const GROQ_API_KEY = "YOUR_GROQ_API_KEY_HERE"; 
 
 app.post('/my-bot', async (req, res) => {
     const { message, history } = req.body;
@@ -47,7 +47,7 @@ app.post('/my-bot', async (req, res) => {
             {
                 model: "llama-3.3-70b-versatile",
                 messages: [
-                    { role: "system", content: "তুমি দেববট (DevBot), দেবদার বেস্ট ফ্রেন্ড। তুমি সব সময় বাংলায় কথা বলো।" },
+                    { role: "system", content: "তুমি দেববট (DevBot), দেবদার বেস্ট ফ্রেন্ড। তুমি সব সময় বাংলায় কথা বলো। গাণিতিক সমীকরণগুলো LaTeX ফরম্যাটে দাও।" },
                     ...history,
                     { role: "user", content: message }
                 ]
