@@ -6,7 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// আপনার Groq API Key এখানে দিন
+// আপনার Groq API Key এখানে বসান
 const GROQ_API_KEY = "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"; 
 
 app.post('/my-bot', async (req, res) => {
@@ -14,16 +14,16 @@ app.post('/my-bot', async (req, res) => {
         const { message, history } = req.body;
         const msgLower = message.toLowerCase();
 
-        // ইউটিউব ভিডিও বা মিউজিক খোঁজার লজিক
+        // ইউটিউব সার্চ লজিক
         if (msgLower.includes("গান") || msgLower.includes("video") || msgLower.includes("youtube")) {
             const query = encodeURIComponent(message.replace(/গান|video|youtube/gi, "").trim());
             const youtubeLink = `https://www.youtube.com/results?search_query=${query}`;
             return res.json({ 
-                response: `আসসালামু আলাইকুম ভাই! আপনার ভিডিওটি খুঁজেছি। [এখানে ক্লিক করে ইউটিউবে দেখুন](${youtubeLink})` 
+                response: `আসসালামু আলাইকুম দেবদা ভাই! আপনার জন্য ভিডিওটি খুঁজেছি।\n\n🔗 **[এখানে ক্লিক করে ইউটিউবে দেখুন](${youtubeLink})**` 
             });
         }
 
-        // Groq Brain
+        // সাধারণ উত্তর ও ম্যাথ সলভার
         const response = await axios.post(
             "https://api.groq.com/openai/v1/chat/completions",
             {
@@ -31,7 +31,7 @@ app.post('/my-bot', async (req, res) => {
                 messages: [
                     { 
                         role: "system", 
-                        content: "তুমি দেববট (DevBot), দেবদা ভাইয়ের বেস্ট ফ্রেন্ড এবং একজন মুসলিম বন্ধু। তুমি SSC লেভেলের গণিত এবং প্রোগ্রামিংয়ে বিশেষজ্ঞ। উত্তর সব সময় সালাম দিয়ে শুরু করবে এবং Markdown ও LaTeX ফরম্যাটে সুন্দর করে সাজিয়ে দেবে।" 
+                        content: "তুমি দেববট, দেবদা ভাইয়ের বেস্ট ফ্রেন্ড এবং একজন দ্বীনি মুসলিম বন্ধু। কথা বলা শুরু করবে আসসালামু আলাইকুম দিয়ে। তুমি গণিত (SSC Level) এবং প্রোগ্রামিংয়ে বিশেষজ্ঞ। উত্তর সব সময় Markdown ফরম্যাটে দেবে।" 
                     },
                     ...history,
                     { role: "user", content: message }
@@ -43,7 +43,7 @@ app.post('/my-bot', async (req, res) => {
         res.json({ response: response.data.choices[0].message.content });
 
     } catch (error) {
-        res.status(500).json({ response: "সার্ভার এরর! রেলওয়ে লগ চেক করুন দেবদা।" });
+        res.status(500).json({ response: "আসসালামু আলাইকুম ভাই, সার্ভারে সমস্যা হয়েছে। রেলওয়ে লগ চেক করুন।" });
     }
 });
 
