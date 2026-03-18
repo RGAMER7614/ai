@@ -6,7 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ১. এখানে তোমার Groq API Key বসাও
+// তোমার Groq API Key এখানে বসাও
 const GROQ_API_KEY = "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"; 
 
 app.post('/my-bot', async (req, res) => {
@@ -17,7 +17,13 @@ app.post('/my-bot', async (req, res) => {
             "https://api.groq.com/openai/v1/chat/completions",
             {
                 model: "llama-3.3-70b-versatile",
-                messages: [{ role: "user", content: userMsg }]
+                messages: [
+                    { 
+                        role: "system", 
+                        content: "তুমি দেবদার (Devda) পার্সোনাল এআই অ্যাসিস্ট্যান্ট। তোমার নাম দেববট (DevBot)। তুমি সব সময় বন্ধুর মতো করে সুন্দর বাংলায় কথা বলবে।" 
+                    },
+                    { role: "user", content: userMsg }
+                ]
             },
             {
                 headers: {
@@ -36,9 +42,10 @@ app.post('/my-bot', async (req, res) => {
     }
 });
 
+// সার্ভার রানিং চেক করার জন্য
 app.get('/', (req, res) => res.send("DevBot Server is Running!"));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server LIVE on port ${PORT}`);
+    console.log(`Server is LIVE on port ${PORT}`);
 });
