@@ -6,37 +6,39 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ১. এখানে তোমার আসল API Key-টি বসাও (নিজে হাতে বসাও ব্রো)
-const API_KEY = "AIzaSyDLKgYZ1mXp5zLsiETmR2Nqrv2qfqqFx74"; 
+// ১. এখানে তোমার Groq API Key বসাও
+const GROQ_API_KEY = "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"; 
 
 app.post('/my-bot', async (req, res) => {
     const userMsg = req.body.message;
     
     try {
-        // এই এন্ডপয়েন্টটি সবথেকে স্ট্যাবল
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
-        
-        const response = await axios.post(url, {
-            contents: [{
-                parts: [{ text: userMsg }]
-            }]
-        });
+        const response = await axios.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            {
+                model: "llama-3.3-70b-versatile",
+                messages: [{ role: "user", content: userMsg }]
+            },
+            {
+                headers: {
+                    "Authorization": `Bearer ${GROQ_API_KEY}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
 
-        // গুগল থেকে আসা উত্তরটি ফিল্টার করা
-        if (response.data && response.data.candidates) {
-            const aiText = response.data.candidates[0].content.parts[0].text;
-            res.json({ response: aiText });
-        } else {
-            res.json({ response: "দুঃখিত, গুগল কোনো উত্তর পাঠায়নি।" });
-        }
+        const aiText = response.data.choices[0].message.content;
+        res.json({ response: aiText });
 
     } catch (error) {
-        console.error("Detailed Error:", error.response ? error.response.data : error.message);
-        res.json({ response: "কানেকশন এরর! সম্ভবত আপনার API Key-তে সমস্যা আছে।" });
+        console.error("Error Detail:", error.response ? error.response.data : error.message);
+        res.json({ response: "সার্ভার এখন ব্যস্ত, আবার চেষ্টা করুন।" });
     }
 });
 
+app.get('/', (req, res) => res.send("DevBot Server is Running!"));
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server LIVE on port ${PORT}`);
 });
