@@ -1,37 +1,38 @@
 const express = require('express');
 const cors = require('cors');
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const axios = require('axios');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// তোমার আসল API Key এখানে বসাও
+// ১. এখানে তোমার আসল API Key বসাও
 const API_KEY = "AIzaSyDLKgYZ1mXp5zLsiETmR2Nqrv2qfqqFx74"; 
-const genAI = new GoogleGenerativeAI(API_KEY);
 
 app.post('/my-bot', async (req, res) => {
     const userMsg = req.body.message;
     
     try {
-        // মডেল ডিক্লেয়ার করার সময় সরাসরি 'gemini-1.5-flash' ব্যবহার করো
-        const model = genAI.getGenerativeModel({ 
-            model: "gemini-1.5-flash" 
-        });
+        // সরাসরি গুগল এপিআই এন্ডপয়েন্টে রিকোয়েস্ট পাঠানো হচ্ছে
+        const response = await axios.post(
+            `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
+            {
+                contents: [{
+                    parts: [{ text: userMsg }]
+                }]
+            }
+        );
 
-        // কন্টেন্ট জেনারেট করার জন্য এই মেথডটি এখন স্ট্যাবল
-        const result = await model.generateContent(userMsg);
-        const response = await result.response;
-        const text = response.text();
+        // উত্তরটি ফিল্টার করে বের করা
+        const aiText = response.data.candidates[0].content.parts[0].text;
+        res.json({ response: aiText });
 
-        res.json({ response: text });
     } catch (error) {
-        console.error("Error Detail:", error.message);
-        res.json({ response: "গুগল এপিআই এরর: " + error.message });
+        console.error("Error Detail:", error.response ? error.response.data : error.message);
+        res.json({ response: "সরাসরি এপিআই কানেকশনে সমস্যা: " + (error.response ? error.response.data.error.message : error.message) });
     }
 });
 
-// Railway এর জন্য পোর্ট এবং হোস্ট সেটআপ
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`);
