@@ -14,7 +14,7 @@ app.post('/my-bot', async (req, res) => {
     const { message, history } = req.body;
     const msgLower = message.toLowerCase();
 
-    // ১. পিসি কমান্ড (PC Command) - ক্যালকুলেটর ওপেন
+    // ১. পিসি কমান্ড (PC Command)
     if (msgLower.includes("ওপেন ক্যালকুলেটর")) {
         exec('calc', (err) => {
             if (err) return res.json({ response: "ক্যালকুলেটর ওপেন করা গেল না দেবদা।" });
@@ -33,8 +33,7 @@ app.post('/my-bot', async (req, res) => {
             if (abstract) {
                 return res.json({ response: `ইন্টারনেট থেকে আপনার জন্য খুঁজেছি দেবদা:\n\n${abstract}\n\nআরও দেখুন: ${url}` });
             } else {
-                // যদি DuckDuckGo-তে সরাসরি উত্তর না থাকে, তবে এআই-কে দিয়ে সার্চ করতে বলা
-                return res.json({ response: "দুঃখিত দেবদা, এই বিষয়ে সরাসরি কোনো তথ্য পেলাম না। আপনি কি অন্যভাবে জিজ্ঞেস করবেন?" });
+                return res.json({ response: "দুঃখিত দেবদা, এই বিষয়ে সরাসরি কোনো তথ্য পেলাম না। অন্য কিছু লিখে চেষ্টা করুন।" });
             }
         } catch (error) {
             return res.json({ response: "সার্চ করার সময় একটু সমস্যা হয়েছে ব্রো।" });
@@ -53,9 +52,7 @@ app.post('/my-bot', async (req, res) => {
                     { role: "user", content: message }
                 ]
             },
-            {
-                headers: { "Authorization": `Bearer ${GROQ_API_KEY}`, "Content-Type": "application/json" }
-            }
+            { headers: { "Authorization": `Bearer ${GROQ_API_KEY}`, "Content-Type": "application/json" } }
         );
         res.json({ response: response.data.choices[0].message.content });
     } catch (error) {
@@ -64,4 +61,4 @@ app.post('/my-bot', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => console.log(`DevBot v2.0 Live on ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`DevBot Live on ${PORT}`));
