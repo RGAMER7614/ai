@@ -10,7 +10,7 @@ app.use(express.json());
 const GROQ_API_KEY = "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"; 
 
 app.post('/my-bot', async (req, res) => {
-    const userMsg = req.body.message;
+    const { message, history } = req.body; // হিস্ট্রি রিসিভ করা হচ্ছে
     
     try {
         const response = await axios.post(
@@ -20,9 +20,10 @@ app.post('/my-bot', async (req, res) => {
                 messages: [
                     { 
                         role: "system", 
-                        content: "তুমি দেবদার (Devda) পার্সোনাল এআই অ্যাসিস্ট্যান্ট। তোমার নাম দেববট (DevBot)। তুমি সব সময় বন্ধুর মতো করে সুন্দর বাংলায় কথা বলবে।" 
+                        content: "তুমি দেবদার (Devda) পার্সোনাল এআই অ্যাসিস্ট্যান্ট। তোমার নাম দেববট (DevBot)। সব সময় বন্ধুর মতো করে বাংলায় কথা বলবে।" 
                     },
-                    { role: "user", content: userMsg }
+                    ...history, // আগের সব কথা এখানে ঢুকবে
+                    { role: "user", content: message } // বর্তমান প্রশ্ন
                 ]
             },
             {
@@ -42,7 +43,6 @@ app.post('/my-bot', async (req, res) => {
     }
 });
 
-// সার্ভার রানিং চেক করার জন্য
 app.get('/', (req, res) => res.send("DevBot Server is Running!"));
 
 const PORT = process.env.PORT || 3000;
