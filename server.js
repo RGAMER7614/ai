@@ -19,12 +19,12 @@ app.post('/my-bot', async (req, res) => {
         res.json({ response: response.text() });
     } catch (error) {
         console.error("Error:", error.message);
-        res.status(500).json({ response: "সার্ভার এরর: " + error.message });
+        res.status(500).json({ response: "সার্ভারে সমস্যা হয়েছে: " + error.message });
     }
 });
 
-// ২. Railway এর জন্য এই পোর্ট সেটআপ জরুরি
+// Railway এর জন্য '0.0.0.0' হোস্ট ব্যবহার করা বাধ্যতামূলক
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Smart Brain is LIVE on port ${PORT}`);
+    console.log(`Smart Brain is running on port ${PORT}`);
 });
