@@ -7,29 +7,24 @@ app.use(cors());
 app.use(express.json());
 
 // তোমার আসল API Key এখানে বসাও
-const API_KEY = "YOUR_GEMINI_API_KEY_HERE"; 
+const API_KEY = "AIzaSyDLKgYZ1mXp5zLsiETmR2Nqrv2qfqqFx74"; 
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 app.post('/my-bot', async (req, res) => {
     const userMsg = req.body.message;
     
     try {
-        // এখানে সরাসরি 'gemini-1.5-flash' মডেল ব্যবহার করছি
-        const model = genAI.getGenerativeModel({ 
-            model: "gemini-1.5-flash"
-        });
+        // মডেল ডিক্লেয়ার করার সময় ভার্সন ঝামেলা এড়াতে সরাসরি মডেল নাম দিন
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-        // কন্টেন্ট জেনারেট করার নতুন এবং স্টেবল মেথড
         const result = await model.generateContent(userMsg);
         const response = await result.response;
         const text = response.text();
 
         res.json({ response: text });
-
     } catch (error) {
-        console.error("ERROR DETECTED:", error.message);
-        // ইউজারকে পরিষ্কার এরর মেসেজ পাঠানো
-        res.json({ response: "গুগল এপিআই এরর: " + error.message });
+        console.error("Error Detail:", error.message);
+        res.json({ response: "সার্ভার এরর: " + error.message });
     }
 });
 
