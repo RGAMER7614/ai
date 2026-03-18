@@ -1,51 +1,67 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
-
+const { exec } = require('child_process');
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
 // তোমার Groq API Key এখানে বসাও
-const GROQ_API_KEY = "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"; 
+const GROQ_API_KEY = "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"; 
 
 app.post('/my-bot', async (req, res) => {
-    const { message, history } = req.body; // হিস্ট্রি রিসিভ করা হচ্ছে
-    
+    const { message, history } = req.body;
+    const msgLower = message.toLowerCase();
+
+    // ১. পিসি কমান্ড (PC Command) - ক্যালকুলেটর ওপেন
+    if (msgLower.includes("ওপেন ক্যালকুলেটর")) {
+        exec('calc', (err) => {
+            if (err) return res.json({ response: "ক্যালকুলেটর ওপেন করা গেল না দেবদা।" });
+        });
+        return res.json({ response: "জি দেবদা, ক্যালকুলেটর ওপেন করছি!" });
+    }
+
+    // ২. আনলিমিটেড ফ্রি ওয়েব সার্চ (DuckDuckGo)
+    if (msgLower.startsWith("খুঁজো")) {
+        const query = message.substring(6).trim();
+        try {
+            const searchRes = await axios.get(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1`);
+            const abstract = searchRes.data.AbstractText;
+            const url = searchRes.data.AbstractURL;
+
+            if (abstract) {
+                return res.json({ response: `ইন্টারনেট থেকে আপনার জন্য খুঁজেছি দেবদা:\n\n${abstract}\n\nআরও দেখুন: ${url}` });
+            } else {
+                // যদি DuckDuckGo-তে সরাসরি উত্তর না থাকে, তবে এআই-কে দিয়ে সার্চ করতে বলা
+                return res.json({ response: "দুঃখিত দেবদা, এই বিষয়ে সরাসরি কোনো তথ্য পেলাম না। আপনি কি অন্যভাবে জিজ্ঞেস করবেন?" });
+            }
+        } catch (error) {
+            return res.json({ response: "সার্চ করার সময় একটু সমস্যা হয়েছে ব্রো।" });
+        }
+    }
+
+    // ৩. সাধারণ চ্যাট (Groq AI)
     try {
         const response = await axios.post(
             "https://api.groq.com/openai/v1/chat/completions",
             {
                 model: "llama-3.3-70b-versatile",
                 messages: [
-                    { 
-                        role: "system", 
-                        content: "তুমি দেবদার (Devda) পার্সোনাল এআই অ্যাসিস্ট্যান্ট। তোমার নাম দেববট (DevBot)। সব সময় বন্ধুর মতো করে বাংলায় কথা বলবে।" 
-                    },
-                    ...history, // আগের সব কথা এখানে ঢুকবে
-                    { role: "user", content: message } // বর্তমান প্রশ্ন
+                    { role: "system", content: "তুমি দেববট (DevBot), দেবদার বেস্ট ফ্রেন্ড। তুমি সব সময় বাংলায় কথা বলো।" },
+                    ...history,
+                    { role: "user", content: message }
                 ]
             },
             {
-                headers: {
-                    "Authorization": `Bearer ${GROQ_API_KEY}`,
-                    "Content-Type": "application/json"
-                }
+                headers: { "Authorization": `Bearer ${GROQ_API_KEY}`, "Content-Type": "application/json" }
             }
         );
-
-        const aiText = response.data.choices[0].message.content;
-        res.json({ response: aiText });
-
+        res.json({ response: response.data.choices[0].message.content });
     } catch (error) {
-        console.error("Error Detail:", error.response ? error.response.data : error.message);
-        res.json({ response: "সার্ভার এখন ব্যস্ত, আবার চেষ্টা করুন।" });
+        res.json({ response: "সার্ভার এরর! রেলওয়ে লগ চেক করুন দেবদা।" });
     }
 });
 
-app.get('/', (req, res) => res.send("DevBot Server is Running!"));
-
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server is LIVE on port ${PORT}`);
-});
+app.listen(PORT, '0.0.0.0', () => console.log(`DevBot v2.0 Live on ${PORT}`));
